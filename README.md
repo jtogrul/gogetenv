@@ -1,0 +1,1 @@
+Just a simple go program to serve all the environment variables over port 80. Useful for testing purposes
