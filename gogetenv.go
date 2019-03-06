@@ -35,7 +35,7 @@ func serveEnvInfo(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", serveEnvInfo)
-	err := http.ListenAndServe(":8000", nil)
+	err := http.ListenAndServe(":80", nil)
 	if err != nil {
 		log.Fatalln("Error: ", err)
 	}
