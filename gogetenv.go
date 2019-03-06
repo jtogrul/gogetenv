@@ -1,34 +1,42 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
-    "strings"
-    "log"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
 	"os"
 )
 
-func printEnv(w http.ResponseWriter, r *http.Request) {
-    r.ParseForm()  // get arguments
-    fmt.Println(r.Form)  // form info
-    fmt.Println("path", r.URL.Path)
-    fmt.Println(r.Form["url_long"])
-	
-    for k, v := range r.Form {
-        fmt.Println("key:", k)
-        fmt.Println("val:", strings.Join(v, ""))
-    }
-	
-	fmt.Println()
-    for _, e := range os.Environ() {
-        fmt.Fprintln(w, e)
-    }
+type envInfo struct {
+	Path   string              `json:"url_path"`
+	Params map[string][]string `json:"url_params"`
+	Env    []string            `json:"environment"`
+}
+
+func serveEnvInfo(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	envInfo := envInfo{
+		Path:   r.URL.Path,
+		Params: r.Form,
+		Env:    os.Environ(),
+	}
+
+	response, err := json.MarshalIndent(envInfo, "", "\t")
+
+	if err != nil {
+		fmt.Fprintln(w, "Error generating JSON response")
+		log.Println("Error generating JSON response: ", err)
+	} else {
+		fmt.Fprintln(w, string(response))
+	}
 }
 
 func main() {
-    http.HandleFunc("/", printEnv)
-    err := http.ListenAndServe(":80", nil)
-    if err != nil {
-        log.Fatal("ListenAndServe: ", err)
-    }
+	http.HandleFunc("/", serveEnvInfo)
+	err := http.ListenAndServe(":8000", nil)
+	if err != nil {
+		log.Fatalln("Error: ", err)
+	}
 }
