@@ -9,8 +9,10 @@ import (
 )
 
 type envInfo struct {
-	Path   string              `json:"url_path"`
+	Host   string              `json:"host"`
+	Path   string              `json:"path"`
 	Params map[string][]string `json:"url_params"`
+	Header map[string][]string `json:"header"`
 	Env    []string            `json:"environment"`
 }
 
@@ -18,8 +20,10 @@ func serveEnvInfo(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	envInfo := envInfo{
+		Host:   r.Host,
 		Path:   r.URL.Path,
 		Params: r.Form,
+		Header: r.Header,
 		Env:    os.Environ(),
 	}
 
