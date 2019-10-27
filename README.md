@@ -42,3 +42,35 @@ Response:
 	]
 }
 ```
+
+## Docker image
+You may use the Docker image of `gogetenv` to test or debug your container setup:
+
+```
+https://hub.docker.com/r/jtogrul/gogetenv
+```
+
+## Example on Kubernetes
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gogetenv
+  labels:
+    app: gogetenv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gogetenv
+  template:
+    metadata:
+      labels:
+        app: gogetenv
+    spec:
+      containers:
+      - name: gogetenv
+        image: jtogrul/gogetenv:latest
+        ports:
+        - containerPort: 80
+```
